@@ -1,6 +1,6 @@
 {
   "name": "sentre-web3",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "The library for Sentre",
   "main": "dist/index.js",
   "scripts": {

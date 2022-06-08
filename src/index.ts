@@ -1,3 +1,3 @@
-export const helloSentreWeb3 = () => {
-  console.log("hello");
-};
+export const helloSentreWeb = () => {
+  console.log('hello v2')
+}
