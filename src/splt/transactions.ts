@@ -10,17 +10,17 @@ import { Transaction } from '@solana/web3.js'
 
 import { toPublicKey } from '../utils'
 
-type MintToParams = {
-  mint: Address
+export type MintToParams = {
+  mintAddress: Address
   amount: BN
   dstAddress?: Address
 }
 export const createMintToTransaction = async (
   provider: AnchorProvider,
-  { mint, amount, dstAddress = provider.wallet.publicKey }: MintToParams,
+  { mintAddress, amount, dstAddress = provider.wallet.publicKey }: MintToParams,
 ) => {
   const splProgram = Spl.token(provider)
-  const mintPublicKey = toPublicKey(mint)
+  const mintPublicKey = toPublicKey(mintAddress)
   const associatedAddress = await utils.token.associatedAddress({
     mint: mintPublicKey,
     owner: toPublicKey(dstAddress),
@@ -37,7 +37,7 @@ export const createMintToTransaction = async (
   return new Transaction().add(ixMintTo)
 }
 
-type CreateMintParams = {
+export type CreateMintParams = {
   mint: web3.Keypair
   decimals?: number
   mintAuthority?: Address
@@ -70,15 +70,15 @@ export const createMintTransaction = async (
   return new Transaction().add(ixCreate).add(ixRent)
 }
 
-type CreateTokenAccountParams = {
-  mint: Address
+export type CreateTokenAccountParams = {
+  mintAddress: Address
   owner?: Address
 }
 export const createTokenAccountTransaction = async (
   provider: AnchorProvider,
-  { mint, owner = provider.wallet.publicKey }: CreateTokenAccountParams,
+  { mintAddress, owner = provider.wallet.publicKey }: CreateTokenAccountParams,
 ) => {
-  const mintPublicKey = toPublicKey(mint)
+  const mintPublicKey = toPublicKey(mintAddress)
   const payerPublicKey = toPublicKey(provider.wallet.publicKey)
   const ownerPublicKey = toPublicKey(owner)
 

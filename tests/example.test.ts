@@ -21,9 +21,6 @@ describe('balancer-amm', () => {
     skipPreflight: true,
   })
 
-  const arrayData: string[] = []
-  const testObject = new Map<string, boolean>()
-
   before('Is generate data!', async () => {
     await provider.connection.requestAirdrop(wallet.publicKey, 1000000000)
     console.log('requestAirdrop')
@@ -31,7 +28,7 @@ describe('balancer-amm', () => {
   })
 
   it('Is created Mint!', async () => {
-    const data = await createMintAndMintTo(provider, new BN(100000))
+    const data = await createMintAndMintTo(provider, { amount: new BN(10000) })
     console.log('data', data)
   })
 })
