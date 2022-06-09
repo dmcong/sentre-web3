@@ -1,3 +1,2 @@
-export const helloSentreWeb = () => {
-  console.log('hello v2')
-}
+export * from './splt'
+export * from './utils'
