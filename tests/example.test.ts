@@ -28,7 +28,11 @@ describe('balancer-amm', () => {
   })
 
   it('Is created Mint!', async () => {
-    const data = await createMintAndMintTo(provider, { amount: new BN(10000) })
+    const mint = new web3.Keypair()
+    const data = await createMintAndMintTo(provider, {
+      amount: new BN(10000),
+      mint,
+    })
     console.log('data', data)
   })
 })

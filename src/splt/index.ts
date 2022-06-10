@@ -7,12 +7,22 @@ type MintToParams = {
   amount: BN
   mint?: web3.Keypair
   dstAddress?: Address
+  decimals?: number
 }
 export const createMintAndMintTo = async (
   provider: AnchorProvider,
-  { amount, mint = web3.Keypair.generate(), dstAddress }: MintToParams,
+  {
+    amount,
+    mint = web3.Keypair.generate(),
+    dstAddress,
+    decimals = 9,
+  }: MintToParams,
+  ignoreRpc = false,
 ) => {
-  const txCreateMint = await Tx.createMintTransaction(provider, { mint })
+  const txCreateMint = await Tx.createMintTransaction(provider, {
+    mint,
+    decimals,
+  })
   const mintAddress = mint.publicKey
   const txCreateTokenAccount = await Tx.createTokenAccountTransaction(
     provider,
@@ -28,8 +38,10 @@ export const createMintAndMintTo = async (
     txCreateTokenAccount,
     txMinTo,
   )
-  const txId = await provider.sendAndConfirm(transaction, [mint])
-  return { txId }
+  // Send transaction if needed
+  let txId = ''
+  if (!ignoreRpc) txId = await provider.sendAndConfirm(transaction, [mint])
+  return { txId, transaction }
 }
 
 export * from './transactions'
