@@ -26,7 +26,8 @@ export const getAnchorProvider = (
     connection,
     {
       publicKey: publicKey,
-      ...wallet,
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
     },
     {
       commitment: 'confirmed',

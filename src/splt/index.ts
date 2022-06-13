@@ -5,18 +5,13 @@ import * as Tx from './transactions'
 
 type MintToParams = {
   amount: BN
-  mint?: web3.Keypair
+  mint: web3.Keypair
   dstAddress?: Address
   decimals?: number
 }
 export const createMintAndMintTo = async (
   provider: AnchorProvider,
-  {
-    amount,
-    mint = web3.Keypair.generate(),
-    dstAddress,
-    decimals = 9,
-  }: MintToParams,
+  { amount, mint, dstAddress, decimals = 9 }: MintToParams,
   ignoreRpc = false,
 ) => {
   const txCreateMint = await Tx.createMintTransaction(provider, {
