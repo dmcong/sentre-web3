@@ -6,6 +6,7 @@ import {
   web3,
   BN,
 } from '@project-serum/anchor'
+import { getMultipleAccounts } from '@project-serum/anchor/dist/cjs/utils/rpc'
 import { Transaction } from '@solana/web3.js'
 
 import { toPublicKey } from '../utils'
@@ -130,4 +131,36 @@ export const createTokenAccountTransaction = async (
   })
 
   return new Transaction().add(ix)
+}
+
+export type CreateMultiTokenAccountParams = {
+  mints: Address[]
+  owner?: Address
+}
+export const createMultiTokenAccountIfNeededTransactions = async (
+  provider: AnchorProvider,
+  { mints, owner = provider.wallet.publicKey }: CreateMultiTokenAccountParams,
+) => {
+  const ownerPublicKey = toPublicKey(owner)
+  const transactions: web3.Transaction[] = []
+  const tokenAccounts = []
+  for (const mint of mints) {
+    const mintPublicKey = toPublicKey(mint)
+    const associatedTokenAccount = await utils.token.associatedAddress({
+      mint: mintPublicKey,
+      owner: ownerPublicKey,
+    })
+    tokenAccounts.push(associatedTokenAccount)
+  }
+  const data = await getMultipleAccounts(provider.connection, tokenAccounts)
+  data.forEach(async (value, index) => {
+    if (value !== null) return
+    const tx = await createTokenAccountTransaction(provider, {
+      mintAddress: mints[index],
+      owner,
+    })
+    transactions.push(tx)
+  })
+
+  return transactions
 }
