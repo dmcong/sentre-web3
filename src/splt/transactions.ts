@@ -6,8 +6,8 @@ import {
   web3,
   BN,
 } from '@project-serum/anchor'
-import { getMultipleAccounts } from '@project-serum/anchor/dist/cjs/utils/rpc'
 import { Transaction } from '@solana/web3.js'
+import { getMultipleAccounts } from '../rpc'
 
 import { toPublicKey } from '../utils'
 
