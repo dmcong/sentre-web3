@@ -19,6 +19,15 @@ describe('rpc test', () => {
       },
       parseData,
     )
+    const data11 = getAccountDataSmart(
+      {
+        connection,
+        publicKey: new PublicKey(
+          '2AWpnMMfjc58XLKvVb4KfoVsvmfWYuNM4GSDTNGkMqkq',
+        ),
+      },
+      parseData,
+    )
 
     const data2 = getAccountDataSmart(
       {
@@ -40,7 +49,7 @@ describe('rpc test', () => {
       parseData,
     )
 
-    const data = await Promise.all([data1, data2, data3])
+    const data = await Promise.all([data1, data11, data2, data3])
     console.log('data', data)
   })
 })

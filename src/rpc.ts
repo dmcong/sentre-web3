@@ -68,13 +68,13 @@ type GetAccountDataSmartParams = {
 /**
  * STORES
  */
-let processStore = new Array<{
+let processStores = new Array<{
   publicKey: web3.PublicKey
   resolve: any
   reject: any
   data?: any
 }>()
-
+let processCache = new Map<string, any>()
 export async function getAccountDataSmart<T>(
   params: GetAccountDataSmartParams,
   parseData: (data: Buffer, rawData?: web3.AccountInfo<Buffer>) => T,
@@ -85,11 +85,13 @@ export async function getAccountDataSmart<T>(
     commitment = 'confirmed',
     debounce = 500,
   } = params
-  return new Promise((resolve, reject) => {
-    if (!processStore.length) {
-      setTimeout(async () => {
-        const processes = processStore
-        processStore = []
+  const cacheKey = publicKey.toBase58()
+  if (!processCache.has(cacheKey)) {
+    const newProcess = new Promise((resolve, reject) => {
+      async function fetchData() {
+        const processes = processStores
+        processStores = []
+        processCache = new Map<string, any>()
         const accounts = await getMultipleAccounts(
           connection,
           processes.map((e) => e.publicKey),
@@ -106,8 +108,11 @@ export async function getAccountDataSmart<T>(
             process.resolve({ publicKey: process.publicKey, data: null })
           }
         }
-      }, debounce)
-    }
-    processStore.push({ publicKey, resolve, reject })
-  })
+      }
+      if (!processStores.length) setTimeout(async () => fetchData(), debounce)
+      processStores.push({ publicKey, resolve, reject })
+    })
+    processCache.set(cacheKey, newProcess)
+  }
+  return processCache.get(cacheKey)
 }
