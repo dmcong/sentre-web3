@@ -55,3 +55,59 @@ export async function getMultipleAccounts(
     return results.flat()
   }
 }
+
+/**
+ * SMART FETCH ACCOUNT WEB3
+ */
+type GetAccountDataSmartParams = {
+  connection: web3.Connection
+  publicKey: web3.PublicKey
+  debounce?: number
+  commitment?: web3.Commitment
+}
+/**
+ * STORES
+ */
+let processStore = new Array<{
+  publicKey: web3.PublicKey
+  resolve: any
+  reject: any
+  data?: any
+}>()
+
+export async function getAccountDataSmart<T>(
+  params: GetAccountDataSmartParams,
+  parseData: (data: Buffer, rawData?: web3.AccountInfo<Buffer>) => T,
+): Promise<{ publicKey: web3.PublicKey; data: T | null }> {
+  const {
+    connection,
+    publicKey,
+    commitment = 'confirmed',
+    debounce = 500,
+  } = params
+  return new Promise((resolve, reject) => {
+    if (!processStore.length) {
+      setTimeout(async () => {
+        const processes = processStore
+        processStore = []
+        const accounts = await getMultipleAccounts(
+          connection,
+          processes.map((e) => e.publicKey),
+          commitment,
+        )
+        for (let i = 0; i < processes.length; i++) {
+          const process = processes[i]
+          try {
+            const acc = accounts[i]
+            if (!acc?.account.data) throw new Error('Invalid Data')
+            const accData = parseData(acc?.account.data)
+            process.resolve({ publicKey: process.publicKey, data: accData })
+          } catch (error) {
+            process.resolve({ publicKey: process.publicKey, data: null })
+          }
+        }
+      }, debounce)
+    }
+    processStore.push({ publicKey, resolve, reject })
+  })
+}

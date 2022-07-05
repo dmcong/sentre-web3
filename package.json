@@ -1,6 +1,6 @@
 {
   "name": "sentre-web3",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "description": "The library for Sentre",
   "main": "dist/index.js",
   "scripts": {
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",
-    "bn.js": "^5.2.1"
+    "bn.js": "^5.2.1",
+    "web3.storage": "^4.2.0"
   }
 }

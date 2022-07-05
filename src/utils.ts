@@ -1,4 +1,11 @@
-import { Address, AnchorProvider, web3 } from '@project-serum/anchor'
+import {
+  Address,
+  AnchorProvider,
+  Idl,
+  Program,
+  Wallet,
+  web3,
+} from '@project-serum/anchor'
 
 export const toPublicKey = (address: Address): web3.PublicKey => {
   const publicKey = new web3.PublicKey(address)
@@ -34,4 +41,29 @@ export const getAnchorProvider = (
       skipPreflight: true,
     },
   )
+}
+
+export const getRawAnchorProvider = (): AnchorProvider => {
+  const cluster = web3.clusterApiUrl('mainnet-beta')
+  const connection = new web3.Connection(cluster, 'confirmed')
+  const keypair = web3.Keypair.generate()
+  const wallet = new Wallet(keypair)
+  return new AnchorProvider(
+    connection,
+    {
+      publicKey: wallet.publicKey,
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+    },
+    {
+      commitment: 'confirmed',
+      skipPreflight: true,
+    },
+  )
+}
+
+export const getRawProgram = <T extends Idl>(idl: T) => {
+  const defaultProgram = web3.Keypair.generate().publicKey
+  const provider = getRawAnchorProvider()
+  return new Program(idl, defaultProgram, provider)
 }

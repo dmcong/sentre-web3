@@ -1,8 +1,8 @@
 import { AnchorProvider, Wallet, web3, BN } from '@project-serum/anchor'
 
-import { createMintAndMintTo } from './../src/splt/index'
+import { createMintAndMintTo } from '../src/splt/index'
 
-describe('balancer-amm', () => {
+describe('splt-test', () => {
   const cluster = web3.clusterApiUrl('devnet')
   const connection = new web3.Connection(cluster, 'confirmed')
   const wallet = new Wallet(

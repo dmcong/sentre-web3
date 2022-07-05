@@ -12,18 +12,18 @@ type MintToParams = {
 export const createMintAndMintTo = async (
   provider: AnchorProvider,
   { amount, mint, dstAddress, decimals = 9 }: MintToParams,
-  ignoreRpc = false,
+  sendAndConfirm = true,
 ) => {
-  const txCreateMint = await Tx.createMintTransaction(provider, {
+  const txCreateMint = await Tx.initTxCreateMint(provider, {
     mint,
     decimals,
   })
   const mintAddress = mint.publicKey
-  const txCreateTokenAccount = await Tx.createTokenAccountTransaction(
-    provider,
-    { mintAddress, owner: dstAddress },
-  )
-  const txMinTo = await Tx.createMintToTransaction(provider, {
+  const txCreateTokenAccount = await Tx.initTxCreateTokenAccount(provider, {
+    mintAddress,
+    owner: dstAddress,
+  })
+  const txMinTo = await Tx.initTxMintTo(provider, {
     mintAddress: mint.publicKey,
     amount,
     dstAddress,
@@ -35,8 +35,8 @@ export const createMintAndMintTo = async (
   )
   // Send transaction if needed
   let txId = ''
-  if (!ignoreRpc) txId = await provider.sendAndConfirm(transaction, [mint])
-  return { txId, transaction }
+  if (sendAndConfirm) txId = await provider.sendAndConfirm(transaction, [mint])
+  return { txId, transaction, signer: [mint] }
 }
 
 export * from './transactions'

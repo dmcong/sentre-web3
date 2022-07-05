@@ -7,8 +7,8 @@ import {
   BN,
 } from '@project-serum/anchor'
 import { Transaction } from '@solana/web3.js'
-import { getMultipleAccounts } from '../rpc'
 
+import { getMultipleAccounts } from '../rpc'
 import { toPublicKey } from '../utils'
 
 export type MintToParams = {
@@ -16,7 +16,7 @@ export type MintToParams = {
   amount: BN
   dstAddress?: Address
 }
-export const createMintToTransaction = async (
+export const initTxMintTo = async (
   provider: AnchorProvider,
   { mintAddress, amount, dstAddress = provider.wallet.publicKey }: MintToParams,
 ) => {
@@ -35,7 +35,7 @@ export const createMintToTransaction = async (
     })
     .instruction()
 
-  return new Transaction().add(ixMintTo)
+  return ixMintTo
 }
 
 export type CreateMintParams = {
@@ -44,7 +44,7 @@ export type CreateMintParams = {
   mintAuthority?: Address
   freezeAuthority?: Address
 }
-export const createMintTransaction = async (
+export const initTxCreateMint = async (
   provider: AnchorProvider,
   {
     mint,
@@ -75,7 +75,7 @@ export type CreateTokenAccountParams = {
   mintAddress: Address
   owner?: Address
 }
-export const createTokenAccountTransaction = async (
+export const initTxCreateTokenAccount = async (
   provider: AnchorProvider,
   { mintAddress, owner = provider.wallet.publicKey }: CreateTokenAccountParams,
 ) => {
@@ -137,7 +137,7 @@ export type CreateMultiTokenAccountParams = {
   mints: Address[]
   owner?: Address
 }
-export const createMultiTokenAccountIfNeededTransactions = async (
+export const initTxCreateMultiTokenAccount = async (
   provider: AnchorProvider,
   { mints, owner = provider.wallet.publicKey }: CreateMultiTokenAccountParams,
 ) => {
@@ -155,7 +155,7 @@ export const createMultiTokenAccountIfNeededTransactions = async (
   const data = await getMultipleAccounts(provider.connection, tokenAccounts)
   data.forEach(async (value, index) => {
     if (value !== null) return
-    const tx = await createTokenAccountTransaction(provider, {
+    const tx = await initTxCreateTokenAccount(provider, {
       mintAddress: mints[index],
       owner,
     })
