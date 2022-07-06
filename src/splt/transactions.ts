@@ -6,7 +6,6 @@ import {
   web3,
   BN,
 } from '@project-serum/anchor'
-import { Transaction } from '@solana/web3.js'
 
 import { getMultipleAccounts } from '../rpc'
 import { toPublicKey } from '../utils'
@@ -68,7 +67,7 @@ export const initTxCreateMint = async (
     })
     .instruction()
 
-  return new Transaction().add(ixCreate).add(ixRent)
+  return new web3.Transaction().add(ixCreate).add(ixRent)
 }
 
 export type CreateTokenAccountParams = {
@@ -130,7 +129,7 @@ export const initTxCreateTokenAccount = async (
     data: Buffer.from([]),
   })
 
-  return new Transaction().add(ix)
+  return new web3.Transaction().add(ix)
 }
 
 export type CreateMultiTokenAccountParams = {
