@@ -20,7 +20,7 @@ const DISCRIMINATOR_SIZE = 8
  * Calculates and returns a unique 8 byte discriminator prepended to all anchor accounts.
  * @param name The name of the account to calculate the discriminator.
  */
-const accountDiscriminator = (name: string): Buffer => {
+export const accountDiscriminator = (name: string): Buffer => {
   return Buffer.from(
     sha256.digest(`account:${camelcase(name, { pascalCase: true })}`),
   ).slice(0, DISCRIMINATOR_SIZE)
@@ -30,7 +30,7 @@ const accountDiscriminator = (name: string): Buffer => {
  * Calculates and returns a unique 8 byte discriminator prepended to all anchor instructions.
  * @param name The name of the instruction to calculate the discriminator.
  */
-const ixDiscriminator = (ixName: string): Buffer => {
+export const ixDiscriminator = (ixName: string): Buffer => {
   let name = snakeCase(ixName)
   let preimage = `global:${name}`
   return Buffer.from(sha256.digest(preimage)).slice(0, DISCRIMINATOR_SIZE)
